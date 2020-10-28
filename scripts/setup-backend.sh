@@ -42,7 +42,7 @@ EVENTS_PUSH_BACKEND_OPTIONS = {"url": "amqp://taiga:$EVENTS_PASS@localhost:5672/
 #    "anon-read": None,
 #    "user-read": None,
 #    "import-mode": None,
-#    "import-dump-mode": "None",
+#    "import-dump-mode": None,
 #    "create-memberships": None,
 #    "login-fail": None,
 #    "register-success": None,
