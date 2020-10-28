@@ -28,7 +28,7 @@ server {
         proxy_pass http://127.0.0.1:8001/api;
         proxy_redirect off;
     }
-    
+
     # Django admin access (/admin/)
     location /admin {
         proxy_set_header Host \$http_host;
@@ -47,6 +47,18 @@ server {
     location /media {
         alias /home/$USER/taiga-back/media;
     }
+
+    # Taiga-events
+        location /events {
+        proxy_pass http://127.0.0.1:8888/events;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_connect_timeout 7d;
+        proxy_send_timeout 7d;
+        proxy_read_timeout 7d;
+        }
+
 }
 EOF
 

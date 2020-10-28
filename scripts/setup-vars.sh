@@ -13,6 +13,9 @@ else
     IP_ADDRESS=${TAIGA_DOMAIN:-$(/sbin/ifconfig $NET_INTERFACE | awk '/inet / { print $2 }' | sed 's/addr://')}
   fi
 
+  SECRET_KEY=$(< /dev/urandom tr -dc A-Za-z | head -c48)
+  EVENTS_PASS=$(< /dev/urandom tr -dc A-Za-z0-9 | head -c16)
+
   read -p "Host name (default: $(hostname)):" TAIGA_HOSTNAME
   TAIGA_HOSTNAME=${TAIGA_HOSTNAME:-$(hostname)}
 
@@ -46,6 +49,8 @@ else
     [Nn]* ) TAIGA_PUBLIC_REGISTER_ENABLED="False";;
     * ) TAIGA_PUBLIC_REGISTER_ENABLED="True";;
   esac
+
+  TAIGA_PUBLIC_REGISTER_ENABLED_FRONT=$(echo "$TAIGA_PUBLIC_REGISTER_ENABLED" | awk '{print tolower($0)}')
 
   TAIGA_SCHEME=${TAIGA_SCHEME:-"http"}
 

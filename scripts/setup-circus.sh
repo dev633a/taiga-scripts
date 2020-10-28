@@ -27,12 +27,12 @@ SHELL=/bin/bash
 USER=taiga
 LANG=en_US.UTF-8
 HOME=/home/$USER
-PYTHONPATH=/home/$USER/.local/lib/python3.4/site-packages
+PYTHONPATH=/home/$USER/.local/lib/$PYTHON_VERSION/site-packages
 EOF
 
 if [ ! -e ~/.setup/circus ]; then
     sudo mv /tmp/taiga-circus.ini /etc/circus/conf.d/taiga.ini
 
-    sudo service circusd restart
+    sudo systemctl restart circusd
     touch ~/.setup/circus
 fi

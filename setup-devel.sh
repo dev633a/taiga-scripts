@@ -17,8 +17,8 @@ source ./scripts/setup-apt.sh
 
 # Setup and install services dependencies
 source ./scripts/setup-postgresql.sh
-#source ./scripts/setup-redis.sh
-#source ./scripts/setup-rabbitmq.sh
+source ./scripts/setup-redis.sh
+source ./scripts/setup-rabbitmq.sh
 
 # Setup and install python related dependencies
 source ./scripts/setup-buildessential.sh
@@ -27,3 +27,7 @@ source ./scripts/setup-python.sh
 # Setup Taiga
 source ./scripts/setup-frontend.sh
 source ./scripts/setup-backend.sh
+source ./scripts/setup-events.sh
+
+# Setup systemd
+source ./scripts/setup-systemd.sh

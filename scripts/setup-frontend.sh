@@ -7,15 +7,19 @@ pushd ~
 cat > /tmp/conf.json <<EOF
 {
     "api": "/api/v1/",
-    "eventsUrl": null,
-    "debug": "true",
-    "publicRegisterEnabled": true,
+    "eventsUrl": "ws://$TAIGA_DOMAIN/events",
+    "eventsMaxMissedHeartbeats": 5,
+    "eventsHeartbeatIntervalTime": 60000,
+    "eventsReconnectTryInterval": 10000,
+    "debug": "false",
+    "publicRegisterEnabled": $TAIGA_PUBLIC_REGISTER_ENABLED_FRONT,
     "feedbackEnabled": false,
     "privacyPolicyUrl": null,
     "termsOfServiceUrl": null,
     "maxUploadFileSize": null,
     "gitHubClientId": null,
-    "contribPlugins": []
+    "contribPlugins": [],
+    "gravatar": false
 }
 EOF
 
@@ -32,7 +36,7 @@ if [ ! -e ~/taiga-front ]; then
 else
     pushd ~/taiga-front
     git fetch
-    git checkout -f stable 
+    git checkout -f stable
     git reset --hard origin/stable
     popd
 fi
