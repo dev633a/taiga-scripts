@@ -1,7 +1,5 @@
 #!/bin/bash
 
-EVENTS_VERSION="master"
-
 pushd ~
 
 cat > /tmp/config.json <<EOF
@@ -84,7 +82,6 @@ if [ ! -e ~/taiga-events ]; then
     # Initial clear
     git clone https://github.com/taigaio/taiga-events.git taiga-events
     pushd ~/taiga-events
-    git checkout -f $EVENTS_VERSION
 
     mv /tmp/config.json .
     mv /tmp/package.json .
@@ -95,7 +92,6 @@ if [ ! -e ~/taiga-events ]; then
 else
     pushd ~/taiga-events
     git fetch
-    git checkout -f $EVENTS_VERSION
     git reset --hard origin/master
 
     mv /tmp/config.json .
@@ -103,7 +99,7 @@ else
     sudo mv /tmp/taiga-events.ini /etc/circus/conf.d/
     sudo chown -R $USER:$(id -gn $USER) /home/taiga/.config
     npm install --only=production
-    
+
     popd
 fi
 

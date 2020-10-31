@@ -9,7 +9,7 @@ After=network.target
 User=taiga
 Environment=PYTHONUNBUFFERED=true
 WorkingDirectory=/home/taiga/taiga-back
-ExecStart=/home/taiga/.virtualenvs/taiga/bin/gunicorn --workers 4 --timeout 60 -b 127.0.0.1:8001 taiga.wsgi
+ExecStart=/home/taiga/.virtualenvs/taiga/bin/gunicorn --workers 4 --timeout 600 -b 127.0.0.1:8001 taiga.wsgi
 Restart=always
 RestartSec=3
 
@@ -45,7 +45,7 @@ After=network.target
 [Service]
 User=taiga
 WorkingDirectory=/home/taiga/taiga-events
-ExecStart=/bin/bash -c "node_modules/coffeescript/bin/coffee index.coffee"
+ExecStart=/usr/bin/coffee index.coffee
 Restart=always
 RestartSec=3
 

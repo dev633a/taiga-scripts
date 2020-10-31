@@ -28,6 +28,3 @@ source ./scripts/setup-python.sh
 source ./scripts/setup-frontend.sh
 source ./scripts/setup-backend.sh
 source ./scripts/setup-events.sh
-
-# Setup systemd
-source ./scripts/setup-systemd.sh
