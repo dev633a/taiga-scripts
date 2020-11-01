@@ -45,7 +45,7 @@ After=network.target
 [Service]
 User=taiga
 WorkingDirectory=/home/taiga/taiga-events
-ExecStart=/usr/bin/coffee index.coffee
+ExecStart=/usr/bin/coffee /home/taiga/taiga-events/index.coffee
 Restart=always
 RestartSec=3
 
