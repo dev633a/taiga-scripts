@@ -31,6 +31,7 @@ else
 
     if [ "$TAIGA_ENCRYPT" == "True" ] ; then
       TAIGA_SCHEME="https"
+      TAIGA_EVENTS_SCHEME="wss"
       while [[ $TAIGA_SSL_EMAIL == "" ]]; do
         read -p "Email to use for certificate notifications (required, cartificate will fail if invalid): " TAIGA_SSL_EMAIL
       done
@@ -53,6 +54,7 @@ else
   TAIGA_PUBLIC_REGISTER_ENABLED_FRONT=$(echo "$TAIGA_PUBLIC_REGISTER_ENABLED" | awk '{print tolower($0)}')
 
   TAIGA_SCHEME=${TAIGA_SCHEME:-"http"}
+  TAIGA_EVENTS_SCHEME=${TAIGA_EVENTS_SCHEME:-"ws"}
 
 fi
 

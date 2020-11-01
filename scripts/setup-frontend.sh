@@ -7,7 +7,7 @@ pushd ~
 cat > /tmp/conf.json <<EOF
 {
     "api": "/api/v1/",
-    "eventsUrl": "ws://$TAIGA_DOMAIN/events",
+    "eventsUrl": "$TAIGA_EVENTS_SCHEME://$TAIGA_DOMAIN/events",
     "eventsMaxMissedHeartbeats": 5,
     "eventsHeartbeatIntervalTime": 60000,
     "eventsReconnectTryInterval": 10000,
