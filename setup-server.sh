@@ -8,6 +8,7 @@ fi
 source ./setup-devel.sh
 
 # Post Setup Services
+# Using systemd instead, disabled circus
 # source ./scripts/setup-circus.sh
 
 source ./scripts/setup-systemd.sh

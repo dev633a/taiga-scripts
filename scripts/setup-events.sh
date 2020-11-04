@@ -13,26 +13,6 @@ cat > /tmp/config.json <<EOF
 
 EOF
 
-cat > /tmp/taiga-events.ini <<EOF
-[watcher:taiga-events]
-working_dir = /home/taiga/taiga-events
-cmd = /usr/bin/coffee
-args = index.coffee
-uid = taiga
-numprocesses = 1
-autostart = true
-send_hup = true
-stdout_stream.class = FileStream
-stdout_stream.filename = /home/taiga/logs/taigaevents.stdout.log
-stdout_stream.max_bytes = 10485760
-stdout_stream.backup_count = 12
-stderr_stream.class = FileStream
-stderr_stream.filename = /home/taiga/logs/taigaevents.stderr.log
-stderr_stream.max_bytes = 10485760
-stderr_stream.backup_count = 12
-
-EOF
-
 # Replace node packages list with updates
 cat > /tmp/package.json <<EOF
 {
@@ -85,7 +65,6 @@ if [ ! -e ~/taiga-events ]; then
 
     mv /tmp/config.json .
     mv /tmp/package.json .
-    sudo mv /tmp/taiga-events.ini /etc/circus/conf.d/
     sudo chown -R $USER:$(id -gn $USER) /home/taiga/.config
     npm install --only=production
     popd
@@ -96,7 +75,6 @@ else
 
     mv /tmp/config.json .
     mv /tmp/package.json .
-    sudo mv /tmp/taiga-events.ini /etc/circus/conf.d/
     sudo chown -R $USER:$(id -gn $USER) /home/taiga/.config
     npm install --only=production
 
