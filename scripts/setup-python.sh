@@ -1,6 +1,10 @@
 #!/bin/bash
 
-if [ "$VERSION_ID" = "18.04" ]; then
+if [ "$VERSION_ID" = "20.04" ]; then
+  # Define python version for virtualenv
+  PYTHON_VERSION="python3.8"
+  apt-install-if-needed python3 python3-pip python3-dev python3-pip virtualenvwrapper
+elif [ "$VERSION_ID" = "18.04" ]; then
   # Define python version for virtualenv
   PYTHON_VERSION="python3.6"
   apt-install-if-needed python3 python3-pip python3-dev python3-pip virtualenvwrapper

@@ -13,7 +13,10 @@ function dropdb-if-needed {
 }
 
 if [ ! -e ~/.setup/postgresql ]; then
-  if [ "$VERSION_ID" = "18.04" ]; then
+  if [ "$VERSION_ID" = "20.04" ]; then
+    apt-install-if-needed postgresql-12 postgresql-contrib \
+        postgresql-doc-12 postgresql-server-dev-12
+  elif [ "$VERSION_ID" = "18.04" ]; then
     apt-install-if-needed postgresql-10 postgresql-contrib \
         postgresql-doc-10 postgresql-server-dev-10
   elif [ "$VERSION_ID" = "16.04" ]; then
