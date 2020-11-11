@@ -10,10 +10,10 @@ popd
 source ./scripts/setup-os-release.sh
 
 # Bootstrap
+source ./scripts/setup-apt.sh
 source ./scripts/setup-vars.sh
 source ./scripts/setup-hostname.sh
 source ./scripts/setup-config.sh
-source ./scripts/setup-apt.sh
 
 # Setup and install services dependencies
 source ./scripts/setup-postgresql.sh

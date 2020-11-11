@@ -22,3 +22,6 @@ function package-not-installed {
 sudo apt-get -y update
 sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o DPkg::options::="--force-confdef" -o DPkg::options::="--force-confold" upgrade
 sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o DPkg::options::="--force-confdef" -o DPkg::options::="--force-confold" dist-upgrade
+
+# Install net-tools to detemine IP
+apt-install-if-needed net-tools
