@@ -1,5 +1,12 @@
 # Changelog #
 
+## Version 0.3 ##
+
+Date: 2021-02-08
+
+- Taiga 6.
+- Removed support fot Ubuntu 16.04 and 18.04.
+
 ## Version 0.2 ##
 
 Date: 2014-11-19
