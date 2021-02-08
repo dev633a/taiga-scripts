@@ -25,3 +25,16 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o DPkg::options::="--force-confd
 
 # Install net-tools to detemine IP
 apt-install-if-needed net-tools
+clear
+cat << "EOF"
+_/_/_/_/_/          _/                          _/
+   _/      _/_/_/        _/_/_/    _/_/_/            _/_/
+  _/    _/    _/  _/  _/    _/  _/    _/      _/  _/    _/
+ _/    _/    _/  _/  _/    _/  _/    _/      _/  _/    _/
+_/      _/_/_/  _/    _/_/_/    _/_/_/  _/  _/    _/_/
+                         _/
+                    _/_/
+          A fork of taigaio/taiga-scripts
+
+
+EOF

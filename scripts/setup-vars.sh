@@ -39,16 +39,16 @@ else
 
   fi
 
-  read -p "Import Sample Projects (Y/n):" TAIGA_SAMPLE_DATA
+  read -p "Import Sample Projects (y/N):" TAIGA_SAMPLE_DATA
   case $TAIGA_SAMPLE_DATA in
-    [Nn]* ) TAIGA_SAMPLE_DATA="False";;
-    * ) TAIGA_SAMPLE_DATA="True";;
+    [Yy]* ) TAIGA_SAMPLE_DATA="True";;
+    * ) TAIGA_SAMPLE_DATA="False";;
   esac
 
-  read -p "Public Registation Enabled: (Y/n):" TAIGA_PUBLIC_REGISTER_ENABLED
+  read -p "Public Registation Enabled: (y/N):" TAIGA_PUBLIC_REGISTER_ENABLED
   case $TAIGA_PUBLIC_REGISTER_ENABLED in
-    [Nn]* ) TAIGA_PUBLIC_REGISTER_ENABLED="False";;
-    * ) TAIGA_PUBLIC_REGISTER_ENABLED="True";;
+    [Yy]* ) TAIGA_PUBLIC_REGISTER_ENABLED="True";;
+    * ) TAIGA_PUBLIC_REGISTER_ENABLED="False";;
   esac
 
   TAIGA_PUBLIC_REGISTER_ENABLED_FRONT=$(echo "$TAIGA_PUBLIC_REGISTER_ENABLED" | awk '{print tolower($0)}')

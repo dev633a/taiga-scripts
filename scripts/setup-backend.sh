@@ -4,33 +4,142 @@ BACKEND_VERSION="stable"
 
 pushd ~
 
-cat > /tmp/settings.py <<EOF
-from .common import *
+cat > /tmp/config.py <<EOF
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014-present Taiga Agile LLC
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-MEDIA_URL = "$TAIGA_SCHEME://$TAIGA_DOMAIN/media/"
-STATIC_URL = "$TAIGA_SCHEME://$TAIGA_DOMAIN/static/"
+import os
 
-# This should change if you want generate urls in emails
-# for external dns.
-SITES["front"]["domain"] = "$TAIGA_DOMAIN"
+from .common import *   # noqa, pylint: disable=unused-wildcard-import
+
+#########################################
+## GENERIC
+#########################################
+
+DEBUG = False
+
+#ADMINS = (
+#    ("Admin", "example@example.com"),
+#)
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'taiga',
+        'USER': 'taiga',
+        'PASSWORD': 'taiga',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
 
 SECRET_KEY = "$SECRET_KEY"
-DEBUG = False
-PUBLIC_REGISTER_ENABLED = $TAIGA_PUBLIC_REGISTER_ENABLED
+TAIGA_URL = "$TAIGA_DOMAIN"
+SITES = {
+    "api": {"domain": "$TAIGA_DOMAIN", "scheme": "http", "name": "api"},
+    "front": {"domain": "$TAIGA_DOMAIN", "scheme": "http", "name": "front"}
+}
 
-DEFAULT_FROM_EMAIL = "no-reply@example.com"
-SERVER_EMAIL = DEFAULT_FROM_EMAIL
+#########################################
+## MEDIA AND STATIC
+#########################################
 
-#EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-#EMAIL_USE_TLS = False
-#EMAIL_HOST = "localhost"
-#EMAIL_HOST_USER = ""
-#EMAIL_HOST_PASSWORD = ""
-#EMAIL_PORT = 25
+# MEDIA_ROOT = '/home/taiga/media'
+MEDIA_URL = f"{ TAIGA_URL }/media/"
+DEFAULT_FILE_STORAGE = "taiga_contrib_protected.storage.ProtectedFileSystemStorage"
+THUMBNAIL_DEFAULT_STORAGE = DEFAULT_FILE_STORAGE
 
+# STATIC_ROOT = '/home/taiga/static'
+STATIC_URL = f"{ TAIGA_URL }/static/"
+
+#########################################
+## EMAIL
+#########################################
+# https://docs.djangoproject.com/en/3.1/topics/email/
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#CHANGE_NOTIFICATIONS_MIN_INTERVAL = 120  # seconds
+
+#DEFAULT_FROM_EMAIL = 'changeme@example.com'
+#EMAIL_USE_TLS = True
+#EMAIL_USE_SSL = True
+#EMAIL_HOST = 'localhost'
+#EMAIL_PORT = 587
+#EMAIL_HOST_USER = 'user'
+#EMAIL_HOST_PASSWORD = 'password'
+
+#########################################
+## EVENTS
+#########################################
 EVENTS_PUSH_BACKEND = "taiga.events.backends.rabbitmq.EventsPushBackend"
-EVENTS_PUSH_BACKEND_OPTIONS = {"url": "amqp://taiga:$EVENTS_PASS@localhost:5672/taiga"}
+EVENTS_PUSH_BACKEND_OPTIONS = {
+    "url": "amqp://taiga:$EVENTS_PASS@127.0.0.1:5672/taiga"
+}
 
+
+#########################################
+## TAIGA ASYNC
+#########################################
+CELERY_ENABLED = os.getenv('CELERY_ENABLED', 'True') == 'True'
+
+from kombu import Queue  # noqa
+
+CELERY_BROKER_URL = "amqp://taiga:$EVENTS_PASS@127.0.0.1:5672/taiga"
+CELERY_RESULT_BACKEND = None # for a general installation, we don't need to store the results
+CELERY_ACCEPT_CONTENT = ['pickle', ]  # Values are 'pickle', 'json', 'msgpack' and 'yaml'
+CELERY_TASK_SERIALIZER = "pickle"
+CELERY_RESULT_SERIALIZER = "pickle"
+CELERY_TIMEZONE = 'America/Los_Angeles'
+CELERY_TASK_DEFAULT_QUEUE = 'tasks'
+CELERY_QUEUES = (
+    Queue('tasks', routing_key='task.#'),
+    Queue('transient', routing_key='transient.#', delivery_mode=1)
+)
+CELERY_TASK_DEFAULT_EXCHANGE = 'tasks'
+CELERY_TASK_DEFAULT_EXCHANGE_TYPE = 'topic'
+CELERY_TASK_DEFAULT_ROUTING_KEY = 'task.default'
+
+
+#########################################
+## CONTRIBS
+#########################################
+# INSTALLED_APPS += [
+#     "taiga_contrib_slack",
+#     "taiga_contrib_github_auth",
+#     "taiga_contrib_gitlab_auth"
+# ]
+#
+# GITHUB_API_CLIENT_ID = "changeme"
+# GITHUB_API_CLIENT_SECRET = "changeme"
+#
+# GITLAB_API_CLIENT_ID = "changeme"
+# GITLAB_API_CLIENT_SECRET = "changeme"
+# GITLAB_URL = "changeme"
+
+
+#########################################
+## TELEMETRY
+#########################################
+
+ENABLE_TELEMETRY = True
+
+#########################################
+##  REGISTRATION
+#########################################
+
+PUBLIC_REGISTER_ENABLED = False
 
 #########################################
 ## THROTTLING
@@ -42,7 +151,7 @@ EVENTS_PUSH_BACKEND_OPTIONS = {"url": "amqp://taiga:$EVENTS_PASS@localhost:5672/
 #    "anon-read": None,
 #    "user-read": None,
 #    "import-mode": None,
-#    "import-dump-mode": None,
+#    "import-dump-mode": "1/minute",
 #    "create-memberships": None,
 #    "login-fail": None,
 #    "register-success": None,
@@ -65,6 +174,16 @@ EVENTS_PUSH_BACKEND_OPTIONS = {"url": "amqp://taiga:$EVENTS_PASS@localhost:5672/
 #MAX_MEMBERSHIPS_PRIVATE_PROJECTS = None # None == no limit
 #MAX_MEMBERSHIPS_PUBLIC_PROJECTS = None # None == no limit
 
+
+#########################################
+## SITEMAP
+#########################################
+
+# If is True /front/sitemap.xml show a valid sitemap of taiga-front client
+#FRONT_SITEMAP_ENABLED = False
+#FRONT_SITEMAP_CACHE_TIMEOUT = 24*60*60  # In second
+
+
 #########################################
 ## FEEDBACK
 #########################################
@@ -72,6 +191,7 @@ EVENTS_PUSH_BACKEND_OPTIONS = {"url": "amqp://taiga:$EVENTS_PASS@localhost:5672/
 # Note: See config in taiga-front too
 #FEEDBACK_ENABLED = True
 #FEEDBACK_EMAIL = "support@taiga.io"
+
 
 #########################################
 ## STATS
@@ -82,22 +202,13 @@ EVENTS_PUSH_BACKEND_OPTIONS = {"url": "amqp://taiga:$EVENTS_PASS@localhost:5672/
 
 
 #########################################
-## CELERY
-#########################################
-# Set to True to enable celery and work in async mode or False
-# to disable it and work in sync mode. You can find the celery
-# settings in settings/celery.py and settings/celery-local.py
-#CELERY_ENABLED = True
-
-
-#########################################
 ## IMPORTERS
 #########################################
 
 # Configuration for the GitHub importer
 # Remember to enable it in the front client too.
 #IMPORTERS["github"] = {
-#    "active": True, # Enable or disable the importer
+#    "active": True,
 #    "client_id": "XXXXXX_get_a_valid_client_id_from_github_XXXXXX",
 #    "client_secret": "XXXXXX_get_a_valid_client_secret_from_github_XXXXXX"
 #}
@@ -119,17 +230,6 @@ EVENTS_PUSH_BACKEND_OPTIONS = {"url": "amqp://taiga:$EVENTS_PASS@localhost:5672/
 #    "pub_cert": "XXXXXX_get_a_valid_pub_cert_from_jira_XXXXXX"
 #}
 
-# Configuration for the Asana importer
-# Remember to enable it in the front client too.
-#IMPORTERS["asana"] = {
-#    "active": True, # Enable or disable the importer
-#    "callback_url": "{}://{}/project/new/import/asana".format(SITES["front"]["scheme"],
-#                                                              SITES["front"]["domain"]),
-#    "app_id": "XXXXXX_get_a_valid_app_id_from_asana_XXXXXX",
-#    "app_secret": "XXXXXX_get_a_valid_app_secret_from_asana_XXXXXX"
-#}
-
-
 EOF
 
 if [ ! -e ~/taiga-back ]; then
@@ -137,7 +237,7 @@ if [ ! -e ~/taiga-back ]; then
   git clone https://github.com/taigaio/taiga-back.git taiga-back
 
   pushd ~/taiga-back
-  git checkout -f stable
+  git checkout -f $BACKEND_VERSION
 
   rabbit-create-user-if-needed taiga $EVENTS_PASS  # username, password
   rabbit-create-vhost-if-needed taiga
@@ -145,29 +245,30 @@ if [ ! -e ~/taiga-back ]; then
   mkvirtualenv-if-needed taiga
 
   # Settings
-  mv /tmp/settings.py settings/local.py
-  workon taiga
-
+  source .venv/bin/activate
+  pip install --upgrade pip wheel
   pip install -r requirements.txt
-  python manage.py migrate --noinput
-  python manage.py compilemessages
-  python manage.py collectstatic --noinput
-  python manage.py loaddata initial_user
-  python manage.py loaddata initial_project_templates
+  pip install git+https://github.com/taigaio/taiga-contrib-protected.git@master#egg=taiga-contrib-protected
+  mv /tmp/config.py settings/config.py
+
+  DJANGO_SETTINGS_MODULE=settings.config python manage.py migrate --noinput
+  #CELERY_ENABLED=False DJANGO_SETTINGS_MODULE=settings.config python manage.py createsuperuser
+  DJANGO_SETTINGS_MODULE=settings.config python manage.py loaddata initial_project_templates
+  DJANGO_SETTINGS_MODULE=settings.config python manage.py compilemessages
+  DJANGO_SETTINGS_MODULE=settings.config python manage.py collectstatic --noinput
 
   # Import sample projects unless explicitly set to "False" in setup-vars
   if [ "$TAIGA_SAMPLE_DATA" != "False" ] ; then
-    python manage.py sample_data
-    python manage.py rebuild_timeline --purge
+    CELERY_ENABLED=False DJANGO_SETTINGS_MODULE=settings.config python manage.py sample_data
   fi
-
   deactivate
+
   popd
 else
   pushd ~/taiga-back
   git fetch
-  git checkout -f stable
-  git reset --hard origin/stable
+  git checkout -f $BACKEND_VERSION
+  git reset --hard origin/$BACKEND_VERSION
 
   workon taiga
   pip install -r requirements.txt

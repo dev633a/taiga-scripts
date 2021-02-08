@@ -13,19 +13,13 @@ function dropdb-if-needed {
 }
 
 if [ ! -e ~/.setup/postgresql ]; then
-  if [ "$VERSION_ID" = "20.04" ]; then
     apt-install-if-needed postgresql-12 postgresql-contrib \
         postgresql-doc-12 postgresql-server-dev-12
-  elif [ "$VERSION_ID" = "18.04" ]; then
-    apt-install-if-needed postgresql-10 postgresql-contrib \
-        postgresql-doc-10 postgresql-server-dev-10
-  elif [ "$VERSION_ID" = "16.04" ]; then
-    apt-install-if-needed postgresql-9.5 postgresql-contrib-9.5 \
-        postgresql-doc-9.5 postgresql-server-dev-9.5
-  fi
 
+    sudo pg_ctlcluster 12 main start
     sudo -u postgres createuser --superuser $USER &> /dev/null
-    sudo -u postgres createdb $USER &> /dev/null
+    sudo -u postgres createdb taiga -O $USER --encoding='utf-8' --locale=en_US.utf8 --template=template0 &> /dev/null
+    sudo -u postgres psql -c "ALTER USER $USER WITH PASSWORD 'taiga';"
 
     touch ~/.setup/postgresql
 fi

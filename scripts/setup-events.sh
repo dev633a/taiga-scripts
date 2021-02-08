@@ -1,60 +1,20 @@
 #!/bin/bash
 
+EVENTS_VERSION="stable"
+
 pushd ~
 
-cat > /tmp/config.json <<EOF
-{
-    "url": "amqp://taiga:$EVENTS_PASS@localhost:5672/taiga",
-    "secret": "$SECRET_KEY",
-    "webSocketServer": {
-        "port": 8888
-    }
-}
+cat > /tmp/.env <<EOF
+RABBITMQ_URL="amqp://taiga:$EVENTS_PASS@127.0.0.1:5672/taiga"
+SECRET="$SECRET_KEY"
+WEB_SOCKET_SERVER_PORT=8888
+APP_PORT=3023
 
 EOF
 
-# Replace node packages list with updates
-cat > /tmp/package.json <<EOF
-{
-  "name": "TaigaIO-Events",
-  "version": "0.0.1",
-  "description": "Taiga project management system (events)",
-  "main": "index.js",
-  "keywords": [
-    "Taiga",
-    "Agile",
-    "Project Management",
-    "Github"
-  ],
-  "author": "Kaleidos OpenSource SL",
-  "license": "AGPL-3.0",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/taigaio/taiga-events.git"
-  },
-  "devDependencies": {
-    "gulp": "^4.0.2",
-    "gulp-cache": "^0.3.0",
-    "gulp-coffee": "^2.3.3",
-    "gulp-coffeelint": "^0.6.0",
-    "gulp-nodemon": "^2.0.4",
-    "gulp-plumber": "^1.0.1"
-  },
-  "dependencies": {
-    "amqplib": "^0.5.1",
-    "base64-url": "^2.3.3",
-    "bluebird": "^2.9.10",
-    "minimist": "^1.2.0",
-    "node-uuid": "^1.4.2",
-    "winston": "^3.0.0-rc5",
-    "ws": "^7.3.1"
-  }
-}
 
-EOF
-
-curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-sudo apt-get install -y gcc g++ make nodejs
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+sudo apt-get install -y nodejs
 sudo npm install -g gulp coffeescript
 
 
@@ -62,19 +22,17 @@ if [ ! -e ~/taiga-events ]; then
     # Initial clear
     git clone https://github.com/taigaio/taiga-events.git taiga-events
     pushd ~/taiga-events
+    git checkout $EVENTS_VERSION
 
-    mv /tmp/config.json .
-    mv /tmp/package.json .
+    mv /tmp/.env .
     sudo chown -R $USER:$(id -gn $USER) /home/taiga/.config
-    npm install --only=production
+    npm install
     popd
 else
     pushd ~/taiga-events
     git fetch
-    git reset --hard origin/master
+    git reset --hard origin/$EVENTS_VERSION
 
-    mv /tmp/config.json .
-    mv /tmp/package.json .
     sudo chown -R $USER:$(id -gn $USER) /home/taiga/.config
     npm install --only=production
 
