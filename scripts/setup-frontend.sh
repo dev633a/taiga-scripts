@@ -6,7 +6,7 @@ pushd ~
 
 cat > /tmp/conf.json <<EOF
 {
-	"api": "$TAIGA_EVENTS_SCHEME://$TAIGA_DOMAIN/api/v1/",
+	"api": "$TAIGA_SCHEME://$TAIGA_DOMAIN/api/v1/",
 	"eventsUrl": "$TAIGA_EVENTS_SCHEME://$TAIGA_DOMAIN/events",
 	"debug": "false",
 	"publicRegisterEnabled": true,

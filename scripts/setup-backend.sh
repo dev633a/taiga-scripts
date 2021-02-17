@@ -49,8 +49,8 @@ DATABASES = {
 SECRET_KEY = "$SECRET_KEY"
 TAIGA_URL = "$TAIGA_DOMAIN"
 SITES = {
-    "api": {"domain": "$TAIGA_DOMAIN", "scheme": "http", "name": "api"},
-    "front": {"domain": "$TAIGA_DOMAIN", "scheme": "http", "name": "front"}
+    "api": {"domain": "$TAIGA_DOMAIN", "scheme": "$TAIGA_SCHEME", "name": "api"},
+    "front": {"domain": "$TAIGA_DOMAIN", "scheme": "$TAIGA_SCHEME", "name": "front"}
 }
 
 #########################################
