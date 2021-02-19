@@ -27,7 +27,8 @@ After=network.target
 [Service]
 User=taiga
 WorkingDirectory=/home/taiga/taiga-events
-ExecStart=npm run start:production
+Environment="NODE_ENV=production"
+ExecStart=node ./src/index.js
 Restart=always
 RestartSec=3
 
